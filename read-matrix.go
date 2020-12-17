@@ -35,6 +35,11 @@ func readAdjacencyList(fileName string) Graph {
 	defer file.Close()
 	fileReader := bufio.NewReader(file)
 
+	// read and discard the first line of the file specifying the number of nodes
+	// this information is determined implicitly in this program,
+	// but not in infection-resistant-network
+	_, err = fileReader.ReadString('\n')
+
 	edges := make([]Edge, 0)
 	// populate edge list
 	for {
@@ -81,6 +86,9 @@ func lineToEdge(line string) Edge {
 	return Edge{nodeA: a, nodeB: b}
 }
 
+// lineToCoordinate takes a line formatted as [nodeID] [x location] [y location]
+// the x and y locations are between -1 and 1
+// it returns the nodeID and (x, y)
 func lineToCoordinate(line string) (int, Coordinate) {
 	fields := strings.Fields(line)
 	if len(fields) != 3 {
@@ -96,7 +104,15 @@ func lineToCoordinate(line string) (int, Coordinate) {
 	y, err := strconv.ParseFloat(fields[2], 64)
 	check(err)
 
+	x, y = normalizeXY(x, y)
+
 	return nodeID, Coordinate{x: x, y: y}
+}
+
+// take x and y coordinates in the range [-1, 1] and convert them to be within the
+// actual bounds of the window
+func normalizeXY(x, y float64) (float64, float64) {
+	return ((x + 1) / 2) * maxX, ((y + 1) / 2) * maxY
 }
 
 func check(err error) {
