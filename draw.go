@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
@@ -12,10 +14,10 @@ const (
 	edgeThickness = 1
 	maxX          = 1500
 	maxY          = 900
-	stateS        = iota
-	stateE        = iota
-	stateI        = iota
-	stateR        = iota
+	stateS        = 0
+	stateE        = 1
+	stateI        = 2
+	stateR        = 3
 )
 
 var colorS = colornames.Blue
@@ -47,6 +49,15 @@ func addNodes(graph Graph, window *pixelgl.Window, imd *imdraw.IMDraw) {
 	imd.Draw(window)
 }
 
+func addDynamicNodes(dynamicGraph DynamicNetwork, step int, window *pixelgl.Window, imd *imdraw.IMDraw) {
+	for node, coordinate := range dynamicGraph.graph.idToCoordinate {
+		imd.Color = dynamicGraph.stepToColors[step][node]
+		imd.Push(pixel.V(coordinate.x, coordinate.y))
+		imd.Circle(radius, 0)
+	}
+	imd.Draw(window)
+}
+
 func addEdges(graph Graph, window *pixelgl.Window, imd *imdraw.IMDraw) {
 	imd.Color = colornames.Black
 	for _, edge := range graph.edges {
@@ -60,6 +71,19 @@ func addEdges(graph Graph, window *pixelgl.Window, imd *imdraw.IMDraw) {
 	imd.Draw(window)
 }
 
-func updateColors(nodeStates map[int]int, window *pixelgl.Window, imd *imdraw.IMDraw) {
-	//
+func drawGraph(graph Graph, window *pixelgl.Window, imd *imdraw.IMDraw) {
+	window.Clear(colornames.Aliceblue)
+	imd.Draw(window)
+	time.Sleep(40 * time.Millisecond)
+	window.Update()
+}
+
+func drawDynamicGraph(graph DynamicNetwork, step int, window *pixelgl.Window, imd *imdraw.IMDraw) {
+	window.Clear(colornames.Aliceblue)
+	imd.Clear()
+	addEdges(graph.graph, window, imd)
+	addDynamicNodes(graph, step, window, imd)
+	imd.Draw(window)
+	time.Sleep(250 * time.Millisecond)
+	window.Update()
 }

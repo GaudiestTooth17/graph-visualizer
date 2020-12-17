@@ -3,10 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/faiface/pixel/pixelgl"
-	"golang.org/x/image/colornames"
 )
 
 func main() {
@@ -20,15 +18,30 @@ func main() {
 
 func run() {
 	graphName := os.Args[1]
+	graphFile, err := os.Open(graphName)
+	check(err)
 	window, imd := makeWindow(graphName)
-	graph := readAdjacencyList(graphName)
-	addEdges(graph, window, imd)
-	addNodes(graph, window, imd)
+
+	// graph, _ := readAdjacencyList(graphName)
+	// addEdges(graph, window, imd)
+	// addNodes(graph, window, imd)
+
+	// for !window.Closed() {
+	// 	drawGraph(graph, window, imd)
+	// }
+
+	dynamicGraph := readDynamicNetwork(graphFile)
+	graphFile.Close()
 
 	for !window.Closed() {
-		window.Clear(colornames.Aliceblue)
-		imd.Draw(window)
-		time.Sleep(40 * time.Millisecond)
-		window.Update()
+		for step := 0; step < len(dynamicGraph.stepToColors) && !window.Closed(); step++ {
+			drawDynamicGraph(dynamicGraph, step, window, imd)
+		}
+	}
+}
+
+func check(err error) {
+	if err != nil {
+		panic(err)
 	}
 }

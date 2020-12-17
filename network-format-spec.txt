@@ -1,0 +1,17 @@
+; This is the official description of how networks and dynamic networks should be stored
+; in text form for use in this and infection-resistant-network
+
+; regular network
+<network> ::= <integer(number of nodes)>"\n"<edges>"\n"<coordinates>"\n"
+<edges> ::= <edge><edges> | ε
+<edge> ::= <integer(node)>" "<integer(node)>"\n"
+<coordinates> ::= <coordinate><coordinates> | ε
+<coordinate> ::= <integer(node)>" "<xy>" "<xy>"\n"
+<xy> ::= a number between -1 and 1 inclusive
+
+; dynamic network
+<network> ::= <integer(number of nodes)>"\n"<edges>"\n"<coordinates>"\n"<all-changes>"\n"
+<all-changes> ::= <changes><all-changes> | ε
+<changes> ::= <change><changes> | ε
+<change> ::= <integer(node)>" "<state>\n
+<state> ::= 0 | 1 | 2 | 3

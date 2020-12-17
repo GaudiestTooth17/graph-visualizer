@@ -27,18 +27,17 @@ type Graph struct {
 	edges          []Edge
 }
 
-func readAdjacencyList(fileName string) Graph {
-	file, err := os.Open(fileName)
-	if err != nil {
-		panic(err)
-	}
-	defer file.Close()
+// readAdjacencyList takes in the name of a file to read and outputs a graph
+// and the Reader that it used so that you can continue reading changes from
+// another file if you want to.
+func readAdjacencyList(file *os.File) (Graph, *bufio.Reader) {
 	fileReader := bufio.NewReader(file)
 
 	// read and discard the first line of the file specifying the number of nodes
 	// this information is determined implicitly in this program,
 	// but not in infection-resistant-network
-	_, err = fileReader.ReadString('\n')
+	_, err := fileReader.ReadString('\n')
+	check(err)
 
 	edges := make([]Edge, 0)
 	// populate edge list
@@ -58,8 +57,8 @@ func readAdjacencyList(fileName string) Graph {
 	// populate idToCoordinate
 	for {
 		line, err := fileReader.ReadString('\n')
-		// stop at EOF
-		if err != nil && errors.Is(err, io.EOF) {
+		// stop at the first blank line
+		if len(line) == 1 {
 			break
 		} else if err != nil && !errors.Is(err, io.EOF) {
 			panic(err)
@@ -69,7 +68,7 @@ func readAdjacencyList(fileName string) Graph {
 	}
 
 	graph := Graph{idToCoordinate: idToCoordinate, edges: edges}
-	return graph
+	return graph, fileReader
 }
 
 func lineToEdge(line string) Edge {
@@ -113,10 +112,4 @@ func lineToCoordinate(line string) (int, Coordinate) {
 // actual bounds of the window
 func normalizeXY(x, y float64) (float64, float64) {
 	return ((x + 1) / 2) * maxX, ((y + 1) / 2) * maxY
-}
-
-func check(err error) {
-	if err != nil {
-		panic(err)
-	}
 }
