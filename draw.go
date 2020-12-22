@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	radius        = 2
+	radius        = 3
 	edgeThickness = 1
 	maxX          = 1500
 	maxY          = 900
@@ -24,6 +24,7 @@ var colorS = colornames.Blue
 var colorE = colornames.Green
 var colorI = colornames.Crimson
 var colorR = colornames.Blueviolet
+var colorBG = colornames.Snow
 
 func makeWindow(title string) (*pixelgl.Window, *imdraw.IMDraw) {
 	cfg := pixelgl.WindowConfig{
@@ -72,14 +73,14 @@ func addEdges(graph Graph, window *pixelgl.Window, imd *imdraw.IMDraw) {
 }
 
 func drawGraph(graph Graph, window *pixelgl.Window, imd *imdraw.IMDraw) {
-	window.Clear(colornames.Aliceblue)
+	window.Clear(colorBG)
 	imd.Draw(window)
 	time.Sleep(40 * time.Millisecond)
 	window.Update()
 }
 
 func drawDynamicGraph(graph DynamicNetwork, step int, window *pixelgl.Window, imd *imdraw.IMDraw) {
-	window.Clear(colornames.Aliceblue)
+	window.Clear(colorBG)
 	imd.Clear()
 	addEdges(graph.graph, window, imd)
 	addDynamicNodes(graph, step, window, imd)
