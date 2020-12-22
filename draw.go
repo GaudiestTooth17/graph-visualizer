@@ -1,16 +1,19 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/faiface/pixel"
 	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
+	"github.com/faiface/pixel/text"
 	"golang.org/x/image/colornames"
+	"golang.org/x/image/font/basicfont"
 )
 
 const (
-	radius        = 3
+	radius        = 5
 	edgeThickness = 1
 	maxX          = 1500
 	maxY          = 900
@@ -23,8 +26,9 @@ const (
 var colorS = colornames.Blue
 var colorE = colornames.Green
 var colorI = colornames.Crimson
-var colorR = colornames.Blueviolet
-var colorBG = colornames.Snow
+var colorR = colornames.Slategrey
+var colorBG = colornames.Black
+var colorEdges = colornames.Snow
 
 func makeWindow(title string) (*pixelgl.Window, *imdraw.IMDraw) {
 	cfg := pixelgl.WindowConfig{
@@ -60,7 +64,7 @@ func addDynamicNodes(dynamicGraph DynamicNetwork, step int, window *pixelgl.Wind
 }
 
 func addEdges(graph Graph, window *pixelgl.Window, imd *imdraw.IMDraw) {
-	imd.Color = colornames.Black
+	imd.Color = colorEdges
 	for _, edge := range graph.edges {
 		coordinateA := graph.idToCoordinate[edge.nodeA]
 		coordinateB := graph.idToCoordinate[edge.nodeB]
@@ -85,6 +89,18 @@ func drawDynamicGraph(graph DynamicNetwork, step int, window *pixelgl.Window, im
 	addEdges(graph.graph, window, imd)
 	addDynamicNodes(graph, step, window, imd)
 	imd.Draw(window)
-	time.Sleep(250 * time.Millisecond)
+	time.Sleep(40 * time.Millisecond)
 	window.Update()
+}
+
+func newStepWriter() func(int, *pixelgl.Window) {
+	atlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
+	screenText := text.New(pixel.V(10, 10), atlas)
+
+	return func(step int, window *pixelgl.Window) {
+		screenText.Clear()
+		fmt.Fprintf(screenText, "Step %d", step)
+		screenText.Draw(window, pixel.IM)
+		window.Update()
+	}
 }

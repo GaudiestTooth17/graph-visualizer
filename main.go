@@ -22,6 +22,7 @@ func run() {
 	check(err)
 	window, imd := makeWindow(graphName)
 
+	// code for static graphs
 	// graph, _ := readAdjacencyList(graphName)
 	// addEdges(graph, window, imd)
 	// addNodes(graph, window, imd)
@@ -30,14 +31,35 @@ func run() {
 	// 	drawGraph(graph, window, imd)
 	// }
 
+	// code for dynamic graphs
 	dynamicGraph := readDynamicNetwork(graphFile)
 	graphFile.Close()
 
+	writeStep := newStepWriter()
+	step := 0
 	for !window.Closed() {
-		for step := 0; step < len(dynamicGraph.stepToColors) && !window.Closed(); step++ {
-			drawDynamicGraph(dynamicGraph, step, window, imd)
+		if window.Pressed(pixelgl.KeyLeft) {
+			step = max(step-1, 0)
+		} else if window.Pressed(pixelgl.KeyRight) {
+			step = min(step+1, len(dynamicGraph.stepToColors)-1)
 		}
+		writeStep(step, window)
+		drawDynamicGraph(dynamicGraph, step, window, imd)
 	}
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
 }
 
 func check(err error) {
