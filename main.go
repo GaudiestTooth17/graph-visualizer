@@ -42,6 +42,10 @@ func run() {
 			step = max(step-1, 0)
 		} else if window.Pressed(pixelgl.KeyRight) {
 			step = min(step+1, len(dynamicGraph.stepToColors)-1)
+		} else if window.JustPressed(pixelgl.KeyA) {
+			step = max(step-1, 0)
+		} else if window.JustPressed(pixelgl.KeyD) {
+			step = min(step+1, len(dynamicGraph.stepToColors)-1)
 		}
 		writeStep(step, window)
 		drawDynamicGraph(dynamicGraph, step, window, imd)
