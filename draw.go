@@ -27,8 +27,9 @@ var colorS = colornames.Blue
 var colorE = colornames.Green
 var colorI = colornames.Crimson
 var colorR = colornames.Slategrey
-var colorBG = colornames.Black
-var colorEdges = colornames.Snow
+var colorBG = colornames.Whitesmoke
+var colorEdges = colornames.Black
+var colorText = colornames.Black
 
 func makeWindow(title string) (*pixelgl.Window, *imdraw.IMDraw) {
 	cfg := pixelgl.WindowConfig{
@@ -96,6 +97,7 @@ func drawDynamicGraph(graph DynamicNetwork, step int, window *pixelgl.Window, im
 func newStepWriter() func(int, *pixelgl.Window) {
 	atlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
 	screenText := text.New(pixel.V(10, 10), atlas)
+	screenText.Color = colorText
 
 	return func(step int, window *pixelgl.Window) {
 		screenText.Clear()

@@ -36,14 +36,14 @@ func run() {
 	graphFile.Close()
 
 	writeStep := newStepWriter()
-	step := 0
+	step := 1
 	for !window.Closed() {
 		if window.Pressed(pixelgl.KeyLeft) {
-			step = max(step-1, 0)
+			step = max(step-1, 1)
 		} else if window.Pressed(pixelgl.KeyRight) {
 			step = min(step+1, len(dynamicGraph.stepToColors)-1)
 		} else if window.JustPressed(pixelgl.KeyA) {
-			step = max(step-1, 0)
+			step = max(step-1, 1)
 		} else if window.JustPressed(pixelgl.KeyD) {
 			step = min(step+1, len(dynamicGraph.stepToColors)-1)
 		}
